@@ -1,0 +1,40 @@
+ClassDeploy fixed build
+
+Main changes:
+- Agent no longer installs as Windows service in the default flow.
+  It now uses HKLM Run for all-user interactive autostart.
+  This fixes black screen stream and dead input caused by Session 0.
+- Agent install no longer rebuilds EXE automatically.
+  Build once, then install.
+- Sound init updated for different pycaw object types.
+- Server database now falls back to a writable location if the DB is readonly.
+- Server run path is forced to ProgramData\ClassDeploy\server.
+- Added offline dependency support from vendor\wheels.
+- Added prepare_offline_packages.bat to download wheels on a machine with internet.
+
+Important:
+- For screen/control to work, the agent must run in a logged-in user session.
+- If you used the old service version before, remove it first:
+  sc stop ClassDeployAgent
+  sc delete ClassDeployAgent
+
+
+2026-04-20 additional fixes:
+- logging fallback added: if C:\ProgramData\ClassDeploy\logs is denied, agent writes to a per-user log in LOCALAPPDATA or TEMP instead of crashing;
+- mutex changed from global to per-session, so a second Windows session can launch its own agent instance;
+- active-session watchdog added, old session disconnects when user switches accounts;
+- remote input now supports mouse button down/up for drag and selection; keyboard capture strengthened in full-screen viewer;
+- invalid offline color #55530 fixed;
+- lock overlay now uses BlockInput(True/False), bind_all(), taskbar-resistant focus loop and blocks common close shortcuts;
+- installer grants Users modify rights on ProgramData\ClassDeploy and adds a common Startup shortcut for all users;
+- server shortcut is recreated on the public desktop and points directly to start_server.bat.
+
+
+2026-04-21 additional fixes:
+- agent install moved to ProgramData\ClassDeploy\Agent to reduce WinError 5 / access denied on locked-down PCs;
+- interactive watchdog launcher added, so agent restarts itself after crashes;
+- autostart now uses hidden VBS launcher from HKLM Run plus common Startup, so every logged-in account starts its own agent session;
+- agent refreshes server.txt periodically while running, improving reconnect after fresh install or server IP changes;
+- keyboard capture removed from live screen control, leaving mouse-only control in the stream viewer;
+- screamer launch hardened against repeated openings;
+- added broadcast audio playback from the teacher server with play and stop controls.
